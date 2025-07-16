@@ -1,0 +1,10 @@
+[Unit]
+Description=Lock screen after XScreenSaver unblanks, even in Wayland
+
+[Service]
+ExecStart=/PATH/TO/xscreensaver-wayland-enhancement/xscreensaver-wayland-locker.py
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=default.target
