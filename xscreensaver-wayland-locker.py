@@ -2,7 +2,8 @@
 
 lock_screen_after_seconds = 60
 
-import subprocess, re, sys, psutil, time, dateutil, datetime
+import subprocess, re, sys, psutil, time, datetime
+import dateutil.parser
 
 # Wait for XScreenSaver service.
 def wait_xscreensaver_systemd():
