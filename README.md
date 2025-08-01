@@ -1,8 +1,8 @@
 # XScreenSaver Wayland Enhancement
 ## Enhanced Blanker and Locker for XScreenSaver on Wayland
-[XScreenSaver](https://www.jwz.org/xscreensaver/) is a screen saver collection built for the X11 Window System / X.Org Server. Wayland / Mutter can kind of run XScreenSaver, but some features are missing or unreliable, even if you have XWayland. XScreenSaver will [likely never](https://www.jwz.org/blog/2023/09/wayland-and-screen-savers/) be ported to Wayland.
+[XScreenSaver](https://www.jwz.org/xscreensaver/) is a screen saver collection built for the X11 Window System / X.Org Server. Wayland / Mutter can kind of run XScreenSaver, but some features are missing or unreliable, even if you have XWayland. XScreenSaver will [likely never](https://www.jwz.org/blog/2023/09/wayland-and-screen-savers/) be ported to Wayland. ...Or, [maybe it will](https://www.jwz.org/blog/2025/07/xscreensaver-6-11/).
 
-But I love the silly little hacks, because I have joy in my heart. And I would be OK running a mostly reliable screen locker, because I operate in a mostly secure physical environment, but my company still requires the semblance of machine security. And so I wrote up some hacky scripts to run as hacky services, to make XScreenSaver kind of work a little bit better on Wayland.
+But I love the silly little hacks, because I have joy in my heart. And I would be OK running a mostly reliable screen locker, because I operate in a mostly secure physical environment, but my company still requires the semblance of machine security. And so I wrote up some hacky scripts to run as hacky services, to make XScreenSaver kind of work a little bit better with GNOME on Wayland.
 ## What You Get
 There are two scripts and services:
 1. One that monitors user idleness using the system native idle reporter, and activates the screensaver after a given idle time.
@@ -10,27 +10,30 @@ There are two scripts and services:
 
 I have tested this on Fedora 42 and Ubuntu 25.04, with the default builds and environments (GNOME and Wayland). It seems to work well enough to share with other people. I don't know how to write installers, and I don't think I'll bother to learn, so I just kind of describe what to do below.
 # Installation
-## Get Things
+## Get XScreenSaver
 Install XScreenSaver
 ```
 sudo dnf install '*xscreensaver*'
 sudo apt install '*xscreensaver*'
 ```
+### XScreenSaver Version
+Starting with version 6.11, XScreenSaver started getting [Wayland support](https://www.jwz.org/blog/2025/07/xscreensaver-6-11/). However, GNOME on Wayland is still unsupported, and now XScreenSaver [just crashes](https://bugzilla.redhat.com/show_bug.cgi?id=2385237). So if you get version 6.11 or later, then you'll need to downgrade to version 6.10 or earlier.
+## Get XScreenSaver Wayland Enhancement
 Clone this repository.
 ```
 git clone https://github.com/pgn674/xscreensaver-wayland-enhancement
 cd xscreensaver-wayland-enhancement/
 ```
-## Set Up Services
-Edit the `xscreensaver-wayland-idle-detector.service` and `xscreensaver-wayland-locker.service` files, changing the `ExecStart` lines to have the full paths for wherever you put the `xscreensaver-wayland-idle-detector.py` and `xscreensaver-wayland-locker.py` files.
-```
-vim xscreensaver-wayland-idle-detector.service
-vim xscreensaver-wayland-locker.service
-```
-Copy the service files into your local user systemd service place.
+## Set Up The Services
+Copy the `xscreensaver-wayland-idle-detector.service` and `xscreensaver-wayland-locker.service` files into your local user systemd service place.
 ```
 mkdir --parents ~/.config/systemd/user
 cp *.service ~/.config/systemd/user/
+```
+Edit the service files, changing the `ExecStart` lines to have the full paths for wherever you put the `xscreensaver-wayland-idle-detector.py` and `xscreensaver-wayland-locker.py` files.
+```
+vim ~/.config/systemd/user/xscreensaver-wayland-idle-detector.service
+vim ~/.config/systemd/user/xscreensaver-wayland-locker.service
 ```
 Enable and start the services.
 ```
