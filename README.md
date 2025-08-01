@@ -12,31 +12,40 @@ I have tested this on Fedora 42 and Ubuntu 25.04, with the default builds and en
 # Installation
 ## Get XScreenSaver
 Install XScreenSaver
-```
+```bash
 sudo dnf install '*xscreensaver*'
 sudo apt install '*xscreensaver*'
 ```
 ### XScreenSaver Version
 Starting with version 6.11, XScreenSaver started getting [Wayland support](https://www.jwz.org/blog/2025/07/xscreensaver-6-11/). However, GNOME on Wayland is still unsupported, and now XScreenSaver [just crashes](https://bugzilla.redhat.com/show_bug.cgi?id=2385237). So if you get version 6.11 or later, then you'll need to downgrade to version 6.10 or earlier.
+
+Here is how I did it on Fedora.
+```bash
+sudo dnf install fedora-repos-archive
+sudo dnf list --showduplicates xscreensaver
+sudo dnf install xscreensaver-1:6.10.1-1.fc42.x86_64
+sudo dnf versionlock add xscreensaver
+sudo dnf versionlock list
+```
 ## Get XScreenSaver Wayland Enhancement
 Clone this repository.
-```
+```bash
 git clone https://github.com/pgn674/xscreensaver-wayland-enhancement
 cd xscreensaver-wayland-enhancement/
 ```
 ## Set Up The Services
 Copy the `xscreensaver-wayland-idle-detector.service` and `xscreensaver-wayland-locker.service` files into your local user systemd service place.
-```
+```bash
 mkdir --parents ~/.config/systemd/user
 cp *.service ~/.config/systemd/user/
 ```
 Edit the service files, changing the `ExecStart` lines to have the full paths for wherever you put the `xscreensaver-wayland-idle-detector.py` and `xscreensaver-wayland-locker.py` files.
-```
+```bash
 vim ~/.config/systemd/user/xscreensaver-wayland-idle-detector.service
 vim ~/.config/systemd/user/xscreensaver-wayland-locker.service
 ```
 Enable and start the services.
-```
+```bash
 systemctl --user daemon-reload
 systemctl --user enable xscreensaver-wayland-idle-detector.service
 systemctl --user enable xscreensaver-wayland-locker.service
@@ -71,7 +80,7 @@ If the screen gets locked, then the screen saver won't be started again. Sorry, 
 # Troubleshooting
 ## Logs
 You can see service statuses and logs this way.
-```
+```bash
 systemctl --user status xscreensaver-wayland-idle-detector.service
 systemctl --user status xscreensaver-wayland-locker.service
 journalctl --user --unit xscreensaver-wayland-idle-detector.service
@@ -79,7 +88,7 @@ journalctl --user --unit xscreensaver-wayland-locker.service
 ```
 ## Manual Run
 And you can try just straight up manually running the scripts, to see if there's some other error you can catch.
-```
+```bash
 ./xscreensaver-wayland-idle-detector.py
 ./xscreensaver-wayland-locker.py
 ```
